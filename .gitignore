@@ -1,0 +1,14 @@
+
+.DS_Store
+Thumbs.db
+db.json
+
+
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python:
+.idea
+__pycache__
