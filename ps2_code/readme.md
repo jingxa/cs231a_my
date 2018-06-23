@@ -44,7 +44,7 @@ Distance to lines in image 1 for normalized: 0.8955997529976532
 Distance to lines in image 2 for normalized: 0.8959928005846117
 ```
 - 极线图：
-![](/result/part_1.jpg)
+![](/result/part_1.png)
 
 
 
