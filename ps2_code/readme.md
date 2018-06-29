@@ -1,6 +1,7 @@
 # 解题过程
 
-未完待续
+- finished !
+- 还是有很多不懂，都是根据别人的答案回忆思路，然后按照别人的代码改写！好难！
 
 - [part 1](https://jingxa.github.io/2018/06/23/CS231A-Homework-2-1/)
 - [part 2](https://jingxa.github.io/2018/06/25/CS231A-Homework-2-2/)
