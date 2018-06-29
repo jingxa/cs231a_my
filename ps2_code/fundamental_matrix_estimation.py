@@ -63,6 +63,7 @@ Please see lecture notes and slides to see how the normalized eight
 point algorithm works
 '''
 def normalized_eight_point_alg(points1, points2):
+
     N = points1.shape[0]
     points1_uv = points1[:, 0:2]
     points2_uv = points2[:, 0:2]    # 取x,y 坐标
@@ -71,7 +72,7 @@ def normalized_eight_point_alg(points1, points2):
     points1_mean = np.mean(points1_uv, axis=0)
     points2_mean = np.mean(points2_uv, axis=0)
 
-    # 点集的到中心的差
+    # 平移后的新坐标
     points1_new = points1_uv - points1_mean
     points2_new = points2_uv - points2_mean
 
@@ -80,18 +81,15 @@ def normalized_eight_point_alg(points1, points2):
     scale1 = np.sqrt(2 / (np.sum(points1_new**2)/N * 1.0))
     scale2 = np.sqrt(2 / (np.sum(points2_new**2)/N * 1.0))
 
-    # 归一化矩阵
-    T1 = np.array([
-        [scale1, 0, -points1_mean[0] * scale1],
-        [0, scale1, -points1_mean[1] * scale2],
-        [0, 0, 1]
-    ])
 
-    T2 = np.array([
-        [scale2, 0, -points1_mean[0] * scale1],
-        [0, scale2, -points1_mean[1] * scale2],
-        [0, 0, 1]
-    ])
+    T1 = np.array([[scale1, 0, -points1_mean[0] * scale1],
+                   [0, scale1, -points1_mean[1] * scale1],
+                   [0, 0, 1]])
+
+    T2 = np.array([[scale2, 0, -points2_mean[0] * scale2],
+                   [0, scale2, -points2_mean[1] * scale2],
+                   [0, 0, 1]])
+
 
     # 对坐标点变换
     q1 = T1.dot(points1.T).T    # N * 3
@@ -103,10 +101,8 @@ def normalized_eight_point_alg(points1, points2):
     #反归一化
     F = T2.T.dot(Fq).dot(T1)
 
+
     return F
-
-
-
 
 
 
@@ -213,14 +209,14 @@ if __name__ == '__main__':
         points2 = get_data_from_txt_file(im_set+'/pt_2D_2.txt')
         assert (points1.shape == points2.shape)
 
-        # Running the linear least squares eight point algorithm
-        F_lls = lls_eight_point_alg(points1, points2)
-        print ("Fundamental Matrix from LLS  8-point algorithm:\n", F_lls)
-
-        print ("Distance to lines in image 1 for LLS:",
-            compute_distance_to_epipolar_lines(points1, points2, F_lls) )
-        print ("Distance to lines in image 2 for LLS:",
-            compute_distance_to_epipolar_lines(points2, points1, F_lls.T))
+        # # Running the linear least squares eight point algorithm
+        # F_lls = lls_eight_point_alg(points1, points2)
+        # print ("Fundamental Matrix from LLS  8-point algorithm:\n", F_lls)
+        #
+        # print ("Distance to lines in image 1 for LLS:",
+        #     compute_distance_to_epipolar_lines(points1, points2, F_lls) )
+        # print ("Distance to lines in image 2 for LLS:",
+        #     compute_distance_to_epipolar_lines(points2, points1, F_lls.T))
 
 
         # Running the normalized eight point algorithm
@@ -228,21 +224,22 @@ if __name__ == '__main__':
 
         pFp = [points2[i].dot(F_normalized.dot(points1[i]))
             for i in range(points1.shape[0])]
-        print ("p'^T F p =", np.abs(pFp).max())
+        # print ("p'^T F p =", np.abs(pFp).max())
         print ("Fundamental Matrix from normalized 8-point algorithm:\n", \
             F_normalized)
-        print ("Distance to lines in image 1 for normalized:", \
-            compute_distance_to_epipolar_lines(points1, points2, F_normalized))
-        print ("Distance to lines in image 2 for normalized:", \
-            compute_distance_to_epipolar_lines(points2, points1, F_normalized.T))
-        #
-        # Plotting the epipolar lines
-        plt.figure(1)
-        # plt.title("LLS Eight-Points")
-        plot_epipolar_lines_on_images(points1, points2, im1, im2, F_lls)
-        plt.suptitle("Dataset%s: LLS Eight-Points " %im_set)
 
-        plt.figure(2)
-        plot_epipolar_lines_on_images(points1, points2, im1, im2, F_normalized)
-        plt.suptitle("Dataset%s: Normalized Eight-Points"%im_set)
-        plt.show()
+        # print ("Distance to lines in image 1 for normalized:", \
+        #     compute_distance_to_epipolar_lines(points1, points2, F_normalized))
+        # print ("Distance to lines in image 2 for normalized:", \
+        #     compute_distance_to_epipolar_lines(points2, points1, F_normalized.T))
+        # #
+        # # Plotting the epipolar lines
+        # plt.figure(1)
+        # # plt.title("LLS Eight-Points")
+        # plot_epipolar_lines_on_images(points1, points2, im1, im2, F_lls)
+        # plt.suptitle("Dataset%s: LLS Eight-Points " %im_set)
+        #
+        # plt.figure(2)
+        # plot_epipolar_lines_on_images(points1, points2, im1, im2, F_normalized)
+        # plt.suptitle("Dataset%s: Normalized Eight-Points"%im_set)
+        # plt.show()

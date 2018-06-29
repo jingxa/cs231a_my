@@ -15,9 +15,14 @@ Returns:
     epipole - the homogenous coordinates [x y 1] of the epipole in the image
 '''
 def compute_epipole(points1, points2, F):
-    # TODO: Implement this method!
-    raise Exception('Not Implemented Error')
-    
+    # F.Tp2 = l, 求得p2到p1面上的映射直线
+    line = F.T.dot(points2.T)  # 3 * N
+    lineT = line.T      # N * 3
+    u, s, vt = np.linalg.svd(lineT)
+    e = vt[-1, :]       # 最优解
+    e /= e[2]       # 齐次坐标（x, y, 1）
+
+    return e
 '''
 COMPUTE_MATCHING_HOMOGRAPHIES determines homographies H1 and H2 such that they
 rectify a pair of images
@@ -32,8 +37,68 @@ Returns:
     H2 - the homography associated with the second image
 '''
 def compute_matching_homographies(e2, F, im2, points1, points2):
-    # TODO: Implement this method!
-    raise Exception('Not Implemented Error')
+    # 首先计算H2
+    W = im2.shape[1]
+    H = im2.shape[0]
+
+    # 平移矩阵T
+    T = np.identity(3)
+    T[0, 2] = -1.0 * W /2
+    T[1, 2] = -1.0 * H /2
+
+    # 旋转矩阵R
+    e = T.dot(e2)   # 极点平移过后形成（x',y',1）
+    e_x = e[0]
+    e_y = e[1]
+    if e_x >= 0:
+        alpha = 1.0
+    else:
+        alpha = -1.0    # 旋转矩阵alpha 正负判断
+
+    R = np.identity(3)
+    R[0, 0] = alpha * e_x / np.sqrt(e_x**2 + e_y**2)
+    R[0, 1] = alpha * e_y / np.sqrt(e_x**2 + e_y**2)
+    R[1, 0] = -alpha * e_y / np.sqrt(e_x**2 + e_y**2)
+    R[1, 1] = alpha * e_x / np.sqrt(e_x**2 + e_y**2)
+
+    # 矩阵G
+    f = R.dot(e)[0]     # R变换之后，e==>(f,0,1)
+    G = np.identity(3)
+    G[2, 0] = -1.0 / f
+
+    H2 = np.linalg.inv(T).dot(G.dot(R.dot(T)))     # H2 = T^-1 G R T
+
+    # ===============================
+    # 计算H1 , H1 = HaH2M
+
+    # 首先计算M
+    e_p = np.zeros((3, 3))
+    e_p[0, 1] = - e2[2]
+    e_p[0, 2] = e2[1]
+    e_p[1, 0] = e2[2]
+    e_p[1, 2] = - e2[0]
+    e_p[2, 0] = - e2[1]
+    e_p[2, 1] = e2[0]   # skew-symmetric 矩阵
+
+    v = np.array([1, 1, 1])
+    M = e_p.dot(F) + np.outer(e2, v)    # e2*VT = (3,3)
+
+
+    # 计算Ha
+    p1_hat = H2.dot(M.dot(points1.T)).T     # p1_hat = H2Mp  3 * N,转置之后 N * 3
+    p2_hat = H2.dot(points2.T).T            # pe_hat = H2p' , 3 * N ,转置之后 N * 3
+    W = p1_hat / p1_hat[:, 2].reshape(-1, 1)    # 齐次坐标系
+    b = (p2_hat / p2_hat[:, 2].reshape(-1, 1))[:, 0]
+
+    # 最小二乘问题
+    a1, a2, a3 = np.linalg.lstsq(W, b, rcond=None)[0]
+    HA = np.identity(3)
+    HA[0] = np.array([a1, a2, a3])
+
+    H1 = HA.dot(H2).dot(M)      # H1 = HaH2M
+
+    return H1, H2
+
 
 if __name__ == '__main__':
     # Read in the data
@@ -52,25 +117,25 @@ if __name__ == '__main__':
 
 
 
-    # # Find the homographies needed to rectify the pair of images
-    # H1, H2 = compute_matching_homographies(e2, F, im2, points1, points2)
-    # print("H1:\n", H1)
-    # print
-    # print("H2:\n", H2)
+    # Find the homographies needed to rectify the pair of images
+    H1, H2 = compute_matching_homographies(e2, F, im2, points1, points2)
+    print("H1:\n", H1)
+    print
+    print("H2:\n", H2)
 
-    # # Transforming the images by the homographies
-    # new_points1 = H1.dot(points1.T)
-    # new_points2 = H2.dot(points2.T)
-    # new_points1 /= new_points1[2,:]
-    # new_points2 /= new_points2[2,:]
-    # new_points1 = new_points1.T
-    # new_points2 = new_points2.T
-    # rectified_im1, offset1 = compute_rectified_image(im1, H1)
-    # rectified_im2, offset2 = compute_rectified_image(im2, H2)
-    # new_points1 -= offset1 + (0,)
-    # new_points2 -= offset2 + (0,)
-    #
-    # # Plotting the image
-    # F_new = normalized_eight_point_alg(new_points1, new_points2)
-    # plot_epipolar_lines_on_images(new_points1, new_points2, rectified_im1, rectified_im2, F_new)
-    # plt.show()
+    # Transforming the images by the homographies
+    new_points1 = H1.dot(points1.T)
+    new_points2 = H2.dot(points2.T)
+    new_points1 /= new_points1[2,:]
+    new_points2 /= new_points2[2,:]
+    new_points1 = new_points1.T
+    new_points2 = new_points2.T
+    rectified_im1, offset1 = compute_rectified_image(im1, H1)
+    rectified_im2, offset2 = compute_rectified_image(im2, H2)
+    new_points1 -= offset1 + (0,)
+    new_points2 -= offset2 + (0,)
+
+    # Plotting the image
+    F_new = normalized_eight_point_alg(new_points1, new_points2)
+    plot_epipolar_lines_on_images(new_points1, new_points2, rectified_im1, rectified_im2, F_new)
+    plt.show()

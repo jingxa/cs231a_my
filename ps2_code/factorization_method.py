@@ -18,8 +18,30 @@ Returns:
     motion - the motion matrix
 '''
 def factorization_method(points_im1, points_im2):
-    # TODO: Implement this method!
-    raise Exception('Not Implemented Error')
+    N = points_im1.shape[0]
+    points_sets = [points_im1, points_im2]      # 2* (N * 3)
+
+    # 建立D矩阵
+    D = np.zeros((4, N))
+    for i in range(len(points_sets)):   # len : 2
+        points = points_sets[i]        # N * 3
+        # 中心化点
+        centroid = 1.0 / N * points.sum(axis=0)     # 均值 (x,y),
+        points[:, 0] -= centroid[0] * np.ones(N)    # x
+        points[:, 1] -= centroid[1] * np.ones(N)    # y
+        D[2*i:2*i+2, :] = points[:, 0:2].T    # 每一副图片的(x,y)复制到D中
+
+    # svd分解D矩阵
+    u, s, vt = np.linalg.svd(D)
+    print(u.shape, s.shape, vt.shape)
+    print(s)
+    M = u[:, 0:3]      # Motion
+    S = np.diag(s)[0:3, 0:3].dot(vt[0:3, :])        # structure
+    return S, M
+
+
+
+
 
 if __name__ == '__main__':
     for im_set in ['data/set1', 'data/set1_subset']:
@@ -36,11 +58,11 @@ if __name__ == '__main__':
 
         # Plot the structure
         fig = plt.figure()
-        ax = fig.add_subplot(121, projection = '3d')
-        scatter_3D_axis_equal(structure[0,:], structure[1,:], structure[2,:], ax)
+        ax = fig.add_subplot(121, projection = '3d')    # 3d 图
+        scatter_3D_axis_equal(structure[0,:], structure[1, :], structure[2, :], ax)  # 散点图
         ax.set_title('Factorization Method')
         ax = fig.add_subplot(122, projection = '3d')
         scatter_3D_axis_equal(points_3d[:,0], points_3d[:,1], points_3d[:,2], ax)
         ax.set_title('Ground Truth')
-
+        plt.suptitle("data-%s"%im_set)
         plt.show()
