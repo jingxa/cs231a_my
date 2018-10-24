@@ -10,7 +10,6 @@
 
 ![b](/images/ps3/space_c_b.png)
 
-
 ### 1.3 没有优化边界的多视角裁剪
 
 ![c](/images/ps3/space_c_c.png)
