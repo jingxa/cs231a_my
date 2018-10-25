@@ -32,7 +32,7 @@
 
 ### 2.1 测试样本1
 
-![sift_a_1](/imgages/ps3/sift_a_1.png)
+![sift_a_1](/images/ps3/sift_a_1.png)
 
 
 ![sift_a_2](/images/ps3/sift_a_2.png)
@@ -43,7 +43,7 @@
 
 ### 2.2 测试样本2
 
-![sift_b_1](/imgages/ps3/sift_b_1.png)
+![sift_b_1](/images/ps3/sift_b_1.png)
 
 
 ![sift_b_2](/images/ps3/sift_b_2.png)
@@ -54,26 +54,26 @@
 
 ### 2.3 测试样本3
 
-![sift_c_1](/imgages/ps3/sift_c_1.png)
+![sift_c_1](/images/ps3/sift_c_1.png)
 
 
-![sift_c_2](/imgages/ps3/sift_c_2.png)
+![sift_c_2](/images/ps3/sift_c_2.png)
 
 
-![sift_c_3](/imgages/ps3/sift_c_3.png)
+![sift_c_3](/images/ps3/sift_c_3.png)
 
 
 ### 2.4 测试样本4
 
 
 
-![sift_d_1](/imgages/ps3/sift_d_1.png)
+![sift_d_1](/images/ps3/sift_d_1.png)
 
 
-![sift_d_2](/imgages/ps3/sift_d_2.png)
+![sift_d_2](/images/ps3/sift_d_2.png)
 
 
-![sift_d_3](/imgages/ps3/sift_d_3.png)
+![sift_d_3](/images/ps3/sift_d_3.png)
 
 
 
@@ -87,4 +87,4 @@
 
 ![sift_a_3](/images/ps3/sift_a_3.png)
 
-![sift_d_4](/imgages/ps3/sift_d_4.png)
+![sift_d_4](/images/ps3/sift_d_4.png)
