@@ -1,5 +1,11 @@
 # 结果
 
+#### [1.space carving](#1-space-carving)
+#### [2.SIFT](#2-sift)
+#### [3.HOG](#3-hog)
+
+---
+
 ## 1. space carving 
 
 ### 1.1 form_initial_voxels形成一个初始立方体
@@ -88,3 +94,9 @@
 ![sift_a_3](/images/ps3/sift_a_3.png)
 
 ![sift_d_4](/images/ps3/sift_d_4.png)
+
+
+# 3. HOG
+
+![hog](/images/ps3/hog.png)
+

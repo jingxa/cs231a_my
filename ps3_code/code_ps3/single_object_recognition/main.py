@@ -74,7 +74,8 @@ def refine_match(keypoints1, keypoints2, matches, reprojection_threshold = 10,
             p1 = np.append(p1, 1)               # (u,v,1)
 
             p2_pred = H.dot(p1)             # p1 变换后的点
-            p2_pred /= p2_pred[2]           # 归一化
+            if p2_pred[2] != 0:
+                p2_pred /= p2_pred[2]           # 归一化
             p2_pred = p2_pred[0:2]          # u,v
 
             p2 = keypoints2[match[1], 0:2]
