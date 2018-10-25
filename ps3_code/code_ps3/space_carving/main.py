@@ -115,7 +115,7 @@ def estimate_silhouette(im):
 
 if __name__ == '__main__':
     estimate_better_bounds = True
-    use_true_silhouette = True
+    use_true_silhouette = False
     frames = sio.loadmat('frames.mat')['frames'][0]
     cameras = [Camera(x) for x in frames]
 
@@ -138,14 +138,14 @@ if __name__ == '__main__':
     # You can reduce the number of voxels for faster debugging, but
     # make sure you use the full amount for your final solution
     num_voxels = 6e6
-    xlim, ylim, zlim = get_voxel_bounds(cameras, estimate_better_bounds)
-    print("lim:", xlim, ylim, zlim)
-    print("--------------------")
+    # # xlim, ylim, zlim = get_voxel_bounds(cameras, estimate_better_bounds)
+    # print("lim:", xlim, ylim, zlim)
+    # print("--------------------")
 
     # This part is simply to test forming the initial voxel grid
     # voxels, voxel_size = form_initial_voxels(xlim, ylim, zlim, 4000)
     # plot_surface(voxels)
-    voxels, voxel_size = form_initial_voxels(xlim, ylim, zlim, num_voxels)
+    # voxels, voxel_size = form_initial_voxels(xlim, ylim, zlim, num_voxels)
 
     # Test the initial carving
     # voxels = carve(voxels, cameras[0])
@@ -153,6 +153,6 @@ if __name__ == '__main__':
     #     plot_surface(voxels)
 
     # Result after all carvings
-    for c in cameras:
-        voxels = carve(voxels, c)
-    plot_surface(voxels, voxel_size)
+    # for c in cameras:
+    #     voxels = carve(voxels, c)
+    # plot_surface(voxels, voxel_size)
